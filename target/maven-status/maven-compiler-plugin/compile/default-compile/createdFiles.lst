@@ -1,0 +1,5 @@
+com\alcanl\app\chat\client\Client.class
+com\alcanl\app\chat\ChatApplication.class
+com\alcanl\app\App.class
+com\alcanl\app\chat\thread\ThreadHandler.class
+com\alcanl\app\chat\server\Server.class
