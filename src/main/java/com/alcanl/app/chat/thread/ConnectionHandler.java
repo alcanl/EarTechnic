@@ -7,8 +7,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-public final class ThreadHandler {
-    private ThreadHandler()
+public final class ConnectionHandler {
+    private ConnectionHandler()
     {
 
     }
@@ -55,7 +55,6 @@ public final class ThreadHandler {
     {
         while (true) {
             printWriter.println(kb.nextLine());
-            printWriter.flush();
         }
     }
     private static void takeMessageLoop(String message, String connector, BufferedReader bufferedReader) throws IOException

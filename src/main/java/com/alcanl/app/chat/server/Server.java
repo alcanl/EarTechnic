@@ -2,45 +2,60 @@ package com.alcanl.app.chat.server;
 
 import com.karandev.util.console.Console;
 
-import static com.alcanl.app.chat.thread.ThreadHandler.*;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
+import java.net.SocketTimeoutException;
 
 public class Server {
-    private final Scanner kb = new Scanner(System.in);
-    private final int port;
-    private void doWorkWithSockets(ServerSocket serverSocket, Socket clientSocket, PrintWriter printWriter,
-                                   BufferedReader bufferedReader)
+    private ServerSocket serverSocket;
+    private Socket clientSocket;
+    private final ServerBuilder serverBuilder;
+    public static final int PORT = 19440;
+    public static final String IP_ADDRESS = "192.168.2.68";
+    private Server()
     {
-            threadServerSender(serverSocket,clientSocket,printWriter, kb).start();
-            threadServerReceiver(serverSocket, clientSocket, bufferedReader, "Client: ").start();
-    }
-    private Server(int port)
-    {
-        this.port = port;
-    }
-    public static Server of(int port)
-    {
-        return new Server(port);
-    }
-    public void run(){
+        serverBuilder = new ServerBuilder();
 
         try {
-            var serverSocket = new ServerSocket(port);
-            var clientSocket = serverSocket.accept();
-            Console.writeLine("Another device has connected to room. Say hi!");
-            var printWriter = new PrintWriter(clientSocket.getOutputStream(), false, StandardCharsets.UTF_8);
-            var bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
-            doWorkWithSockets(serverSocket, clientSocket, printWriter, bufferedReader);
+            serverSocket = new ServerSocket(PORT);
+            Console.writeLine("Server waiting for the clients connection...");
+            clientSocket = serverSocket.accept();
+            Console.writeLine("The client has connected.");
         }
-        catch (IOException ex) {
-            System.out.println(ex.getMessage());
+        catch (SocketTimeoutException ex)
+        {
+            Console.writeLine("Socket timeout has ended while waiting process of the client");
         }
+        catch (SecurityException ex)
+        {
+            Console.writeLine("Security Exception occurs");
+        }
+        catch (IOException ex)
+        {
+            Console.writeLine("IO Exception Occur");
+        }
+    }
+    public static Server of(String nickName)
+    {
+        var server = new Server();
+
+        server.serverBuilder.setConnector(nickName).setPrintWriter(server.clientSocket).setBufferedReader(server.clientSocket);
+
+        return server;
+    }
+    public PrintWriter getPrintWriter()
+    {
+        return this.serverBuilder.getPrintWriter();
+    }
+    public BufferedReader getBufferedReader()
+    {
+        return this.serverBuilder.getBufferedReader();
+    }
+    public void startConnection()
+    {
+        this.serverBuilder.connect(serverSocket, clientSocket);
     }
 }

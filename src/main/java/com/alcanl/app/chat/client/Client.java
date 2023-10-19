@@ -1,45 +1,58 @@
 package com.alcanl.app.chat.client;
 
-import static com.alcanl.app.chat.thread.ThreadHandler.*;
+import com.alcanl.app.chat.server.Server;
+import com.alcanl.app.global.Resources;
+import com.karandev.util.console.Console;
+
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 
 public class Client {
-    private final int port;
+    private Socket clientSocket;
     private final String ip_address;
-    private final Scanner kb = new Scanner(System.in);
-
-    private Client(int port, String ip_address)
+    private final ClientBuilder clientBuilder;
+    private Client()
     {
-        this.port = port;
-        this.ip_address = ip_address;
-    }
-
-    public static Client of(String ip_address, int port) {
-        return new Client(port, ip_address);
-    }
-
-    private void doWorkWithSockets(Socket clientSocket, PrintWriter printWriter,
-                                   BufferedReader bufferedReader)
-    {
-            threadClientSender(clientSocket,printWriter, kb).start();
-            threadClientReceiver(clientSocket, bufferedReader, "Server: ").start();
-    }
-    public void run() {
+        clientBuilder = new ClientBuilder();
+        ip_address = Resources.getIpAddress();
 
         try {
-            var clientSocket = new Socket(ip_address, port);
-            var printWriter = new PrintWriter(clientSocket.getOutputStream(), false, StandardCharsets.UTF_8);
-            var bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
-            doWorkWithSockets(clientSocket, printWriter, bufferedReader);
-
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            clientSocket = new Socket(Server.IP_ADDRESS, Server.PORT);
         }
+        catch (IOException ex)
+        {
+            Console.writeLine(ex.getMessage());
+        }
+
+    }
+    public Socket getClientSocket()
+    {
+        return clientSocket;
+    }
+    public String getIp_address()
+    {
+        return ip_address;
+    }
+    public void startConnection()
+    {
+        this.clientBuilder.connect(this.clientSocket);
+    }
+    public PrintWriter getPrintWriter()
+    {
+        return this.clientBuilder.getPrintWriter();
+    }
+    public BufferedReader getBufferedReader()
+    {
+        return this.clientBuilder.getBufferedReader();
+    }
+    public static Client of(String nickName) {
+
+        var client = new Client();
+        client.clientBuilder.setConnector(nickName).setPrintWriter(client).setBufferedReader(client);
+        return client;
     }
 }
+
+

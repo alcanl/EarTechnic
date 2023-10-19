@@ -27,6 +27,16 @@
             <url>https://raw.github.com/oguzkaran/javaapp1-mar-2023-karandev-maven-repo/main</url>
         </repository>
 
+        <repository>
+            <id>org.eclipse.jetty.aggregate</id>
+            <url>https://mvnrepository.com/artifact/org.eclipse.jetty.aggregate/jetty-all</url>
+        </repository>
+
+        <repository>
+            <id>xuggle repo</id>
+            <url>https://www.dcm4che.org/maven2/</url>
+        </repository>
+
     </repositories>
 
     <properties>
@@ -72,10 +82,26 @@
             <version>2.15.1</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.aggregate</groupId>
-            <artifactId>jetty-all</artifactId>
-            <version>9.2.27.v20190403</version>
+            <groupId>io.netty</groupId>
+            <artifactId>netty</artifactId>
+            <version>3.10.6.Final</version>
         </dependency>
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.19</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>2.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>xuggle</groupId>
+            <artifactId>xuggle-xuggler</artifactId>
+            <version>5.4</version>
+        </dependency>
+
 
     </dependencies>
 
