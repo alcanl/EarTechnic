@@ -1,5 +1,7 @@
 package com.alcanl.app.global;
 
+import javax.swing.*;
+import java.awt.*;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -32,5 +34,14 @@ public final class Resources {
             throw new RuntimeException(e);
         }
         return null;
+    }
+    public static void setJFrame(ImageDisplayPanel imageDisplayPanel)
+    {
+        JFrame jframe = new JFrame();
+        jframe.setSize(800, 600);
+        jframe.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        jframe.setLayout(new BorderLayout());
+        jframe.add(imageDisplayPanel, BorderLayout.CENTER);
+        jframe.setVisible(true);
     }
 }

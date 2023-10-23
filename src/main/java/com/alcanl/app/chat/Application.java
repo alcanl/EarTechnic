@@ -50,6 +50,7 @@ public class Application {
         var client = Client.of("Guest");
         client.startConnection();
         Console.writeLine("Connection establishing....\nConnection verified.");
+
     }
 
 }
