@@ -56,7 +56,7 @@ public class StreamServerAgent implements IStreamServerAgent{
 
 	@Override
 	public void start(SocketAddress streamAddress) {
-		logger.info("Server started :{}",streamAddress);
+		logger.info("ServerConsoleSender started :{}",streamAddress);
 		Channel channel = serverBootstrap.bind(streamAddress);
 		channelGroup.add(channel);
 	}

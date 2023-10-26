@@ -10,7 +10,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-
 public final class ConnectionHandler {
     private ConnectionHandler()
     {
@@ -31,134 +30,158 @@ public final class ConnectionHandler {
     {
 
     }
-    private static void takeImageLoop(ImageDisplayPanel imageDisplayPanel, DataInputStream dataInputStream) throws IOException
+    private static void takeImage(ImageDisplayPanel imageDisplayPanel, DataInputStream dataInputStream) throws IOException
     {
-        while (true) {
-            int frameWidth = dataInputStream.readInt();
-            int frameHeight = dataInputStream.readInt();
-            int[] pixelData = new int[frameWidth * frameHeight];
+        int frameWidth = dataInputStream.readInt();
+        int frameHeight = dataInputStream.readInt();
+        int[] pixelData = new int[frameWidth * frameHeight];
 
-            for (int i = 0; i < pixelData.length; i++) {
-                pixelData[i] = dataInputStream.readInt();
-            }
-            BufferedImage frame = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_RGB);
-            frame.setRGB(0, 0, frameWidth, frameHeight, pixelData, 0, frameWidth);
-
-            imageDisplayPanel.setBackground(frame);
+        for (int i = 0; i < pixelData.length; i++) {
+            pixelData[i] = dataInputStream.readInt();
         }
+        BufferedImage frame = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_RGB);
+        frame.setRGB(0, 0, frameWidth, frameHeight, pixelData, 0, frameWidth);
+
+        imageDisplayPanel.setBackground(frame);
     }
-    private static void sendImageLoop(Webcam webcam, DataOutputStream dataOutputStream) throws IOException
+    private static void sendImage(Webcam webcam, DataOutputStream dataOutputStream) throws IOException
     {
-        while (true) {
-            BufferedImage frame = webcam.getImage();
+        BufferedImage frame = webcam.getImage();
 
-            int frameWidth = frame.getWidth();
-            int frameHeight = frame.getHeight();
+        int frameWidth = frame.getWidth();
+        int frameHeight = frame.getHeight();
 
-            dataOutputStream.writeInt(frameWidth);
-            dataOutputStream.writeInt(frameHeight);
+        dataOutputStream.writeInt(frameWidth);
+        dataOutputStream.writeInt(frameHeight);
 
-            int[] pixelData = new int[frameWidth * frameHeight];
-            frame.getRGB(0, 0, frameWidth, frameHeight, pixelData, 0, frameWidth);
+        int[] pixelData = new int[frameWidth * frameHeight];
+        frame.getRGB(0, 0, frameWidth, frameHeight, pixelData, 0, frameWidth);
+        for (int pixelDatum : pixelData)
+            dataOutputStream.writeInt(pixelDatum);
 
-            for (int pixelDatum : pixelData)
-                dataOutputStream.writeInt(pixelDatum);
-
-        }
     }
-    private static void sendMessageLoop(PrintWriter printWriter, Scanner kb, String connector)
+    private static void sendMessage(PrintWriter printWriter, Scanner kb, String connector)
     {
-        while (true) {
-            printWriter.println(connector + ": " + kb.nextLine());
-        }
+        printWriter.println(connector + ": " + kb.nextLine());
     }
-    private static void takeMessageLoop(String message, BufferedReader bufferedReader) throws IOException
+    private static void takeMessage(BufferedReader bufferedReader) throws IOException
     {
-        while (message != null) {
-            Console.writeLine(message);
-            message = bufferedReader.readLine();
-        }
+        Console.writeLine(bufferedReader.readLine());
+
     }
-    public static void clientReceiverCallback(Socket clientSocket, BufferedReader bufferedReader) throws IOException
+    public static void clientMessageReceiver(Socket clientSocket, BufferedReader bufferedReader)
     {
         try(clientSocket; bufferedReader) {
-            takeMessageLoop(bufferedReader.readLine(), bufferedReader);
+            while (true) {
+                takeMessage(bufferedReader);
+            }
         }
-    }
-    public static void clientSenderCallback(Socket clientSocket, PrintWriter printWriter,
-                                             Scanner kb, String connector) throws IOException
-    {
-        try(clientSocket; printWriter)
+        catch (IOException ex)
         {
-            sendMessageLoop(printWriter, kb, connector);
+            Console.writeLine(ex.getMessage());
         }
     }
-    public static void serverReceiverCallback(ServerSocket serverSocket, Socket clientSocket,
-                                               BufferedReader bufferedReader) throws IOException
+    public static void clientMessageSender(Socket clientSocket, PrintWriter printWriter,
+                                           Scanner kb, String connector)
     {
-        try(serverSocket; clientSocket; bufferedReader) {
-            takeMessageLoop(bufferedReader.readLine(), bufferedReader);
-
+        try(clientSocket; printWriter) {
+            while (true) {
+                sendMessage(printWriter, kb, connector);
+            }
         }
-    }
-    public static void serverSenderCallback(ServerSocket serverSocket, Socket clientSocket,
-                                             PrintWriter printWriter, Scanner kb, String connector) throws IOException
-    {
-        try(serverSocket; clientSocket; printWriter)
+        catch (IOException ex)
         {
-            sendMessageLoop(printWriter, kb, connector);
+            Console.writeLine(ex.getMessage());
         }
     }
-
-
-    public static void serverImageReceiverCallback(ServerSocket serverSocket, Socket clientSocket,
-                                                   ImageDisplayPanel imageDisplayPanel, DataInputStream dataInputStream)
-            throws IOException
+    public static void serverMessageReceiver(ServerSocket serverSocket, Socket clientSocket,
+                                              BufferedReader bufferedReader)
     {
-        try(serverSocket; clientSocket; dataInputStream)
+        try(serverSocket) {
+            clientMessageReceiver(clientSocket, bufferedReader);
+        }
+        catch(IOException ex)
         {
-            takeImageLoop(imageDisplayPanel, dataInputStream);
+            Console.writeLine(ex.getMessage());
         }
     }
-    public static void serverImageSenderCallback(ServerSocket serverSocket, Socket clientSocket,
-                                                 Webcam webcam, DataOutputStream dataOutputStream) throws IOException
+
+    public static void serverMessageSender(ServerSocket serverSocket, Socket clientSocket,
+                                           PrintWriter printWriter, Scanner kb, String connector)
     {
-        try(serverSocket; clientSocket; dataOutputStream)
+        try (serverSocket) {
+            clientMessageSender(clientSocket, printWriter, kb, connector);
+        }
+        catch (IOException ex)
         {
-            openWebcam(webcam);
-            sendImageLoop(webcam, dataOutputStream);
+            Console.writeLine(ex.getMessage());
         }
     }
-    public static void clientImageReceiverCallback(Socket socket, ImageDisplayPanel imageDisplayPanel,
-                                                   DataInputStream dataInputStream) throws IOException
+
+
+    public static void serverImageReceiver(ServerSocket serverSocket, Socket clientSocket,
+                                           ImageDisplayPanel imageDisplayPanel, DataInputStream dataInputStream)
     {
-        try(socket; dataInputStream)
+        try(serverSocket) {
+            clientImageReceiver(clientSocket, imageDisplayPanel, dataInputStream);
+        }
+        catch (IOException ex)
         {
-            takeImageLoop(imageDisplayPanel, dataInputStream);
+            Console.writeLine(ex.getMessage());
         }
     }
-    public static void clientImageSenderCallback(Socket socket, Webcam webcam, DataOutputStream dataOutputStream) throws IOException
+    public static void serverImageSender(ServerSocket serverSocket, Socket clientSocket,
+                                         Webcam webcam, DataOutputStream dataOutputStream)
     {
-        try(socket; dataOutputStream)
+        try(serverSocket)
         {
-            openWebcam(webcam);
-            sendImageLoop(webcam, dataOutputStream);
+            clientImageSender(clientSocket, webcam, dataOutputStream);
+        }
+        catch (IOException ex)
+        {
+            Console.writeLine(ex.getMessage());
+        }
+    }
+    public static void clientImageReceiver(Socket socket, ImageDisplayPanel imageDisplayPanel,
+                                                   DataInputStream dataInputStream)
+    {
+        try(socket; dataInputStream) {
+        while (true) {
+                takeImage(imageDisplayPanel, dataInputStream);
+            }
+        }
+        catch (IOException ex)
+        {
+            Console.writeLine(ex.getMessage());
+        }
+    }
+    public static void clientImageSender(Socket socket, Webcam webcam, DataOutputStream dataOutputStream)
+    {
+        openWebcam(webcam);
+        try(socket; dataOutputStream) {
+            while (true) {
+                sendImage(webcam, dataOutputStream);
+            }
+        }
+        catch (IOException ex)
+        {
+            Console.writeLine(ex.getMessage());
         }
     }
 
-    public static void serverAudioReceiverCallback()
+    public static void serverAudioReceiver()
     {
 
     }
-    public static void serverAudioSenderCallback()
+    public static void serverAudioSender()
     {
 
     }
-    public static void clientAudioReceiverCallback()
+    public static void clientAudioReceiver()
     {
 
     }
-    public static void clientAudioSenderCallback()
+    public static void clientAudioSender()
     {
 
     }
