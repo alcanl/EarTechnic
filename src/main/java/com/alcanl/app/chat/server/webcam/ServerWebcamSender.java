@@ -1,6 +1,8 @@
 package com.alcanl.app.chat.server.webcam;
 
 import com.alcanl.app.chat.server.Server;
+import com.alcanl.app.chat.server.ServerBuilder;
+import com.alcanl.app.modules.webcam.IWebcamSenderIBuilder;
 import com.github.sarxos.webcam.Webcam;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -30,30 +32,29 @@ public class ServerWebcamSender extends Server {
     {
         connect();
     }
-    public static class Builder {
-        private static ServerWebcamSender serverWebcamSender;
+    public static class Builder extends ServerBuilder implements IWebcamSenderIBuilder {
 
         public Builder(ServerSocket serverSocket, Socket clientSocket) {
-            serverWebcamSender = new ServerWebcamSender(serverSocket, clientSocket);
+            server = new ServerWebcamSender(serverSocket, clientSocket);
         }
-
+        @Override
         public Builder setDataOutputStream(Socket clientSocket) throws IOException {
-            serverWebcamSender.dataOutputStream = new DataOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
+            ((ServerWebcamSender)server).dataOutputStream = new DataOutputStream(new BufferedOutputStream(clientSocket.getOutputStream()));
             return this;
         }
-
+        @Override
         public Builder setConnector(String connector) {
-            serverWebcamSender.connector = connector;
+            ((ServerWebcamSender)server).connector = connector;
             return this;
         }
-
+        @Override
         public Builder setWebcam(Webcam webcam) {
             ServerWebcamSender.webcam = webcam;
             return this;
         }
-
+        @Override
         public ServerWebcamSender create() {
-            return serverWebcamSender;
+            return ((ServerWebcamSender)server);
         }
     }
 }

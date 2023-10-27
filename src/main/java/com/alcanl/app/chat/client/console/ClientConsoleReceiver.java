@@ -1,6 +1,8 @@
 package com.alcanl.app.chat.client.console;
 
 import com.alcanl.app.chat.client.Client;
+import com.alcanl.app.chat.client.ClientBuilder;
+import com.alcanl.app.modules.console.IConsoleReceiverBuilder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,24 +26,26 @@ public class ClientConsoleReceiver extends Client {
     {
         connect();
     }
-    public static class Builder {
-        private static ClientConsoleReceiver clientConsoleReceiver;
+    public static class Builder extends ClientBuilder implements IConsoleReceiverBuilder {
         public Builder(Socket clientSocket)
         {
-            clientConsoleReceiver = new ClientConsoleReceiver(clientSocket);
+            client = new ClientConsoleReceiver(clientSocket);
         }
+        @Override
         public Builder setBufferedReader(Socket clientSocket) throws IOException
         {
-            clientConsoleReceiver.bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
+            ((ClientConsoleReceiver)client).bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
             return this;
         }
+        @Override
         public Builder setConnector(String connector)
         {
-            clientConsoleReceiver.connector = connector;
+            ((ClientConsoleReceiver)client).connector = connector;
             return this;
         }
+         @Override
         public ClientConsoleReceiver create() {
-            return clientConsoleReceiver;
+            return ((ClientConsoleReceiver)client);
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.alcanl.app.chat.client.console;
 
 import com.alcanl.app.chat.client.Client;
+import com.alcanl.app.chat.client.ClientBuilder;
+import com.alcanl.app.modules.console.IConsoleSenderBuilder;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -24,24 +26,26 @@ public class ClientConsoleSender extends Client {
     {
         connect();
     }
-    public static class Builder {
-        private static ClientConsoleSender clientConsoleSender;
+    public static class Builder extends ClientBuilder implements IConsoleSenderBuilder {
         public Builder(Socket clientSocket)
         {
-            clientConsoleSender = new ClientConsoleSender( clientSocket);
+            client = new ClientConsoleSender( clientSocket);
         }
-        public ClientConsoleSender.Builder setPrintWriter(Socket clientSocket) throws IOException
+        @Override
+        public Builder setPrintWriter(Socket clientSocket) throws IOException
         {
-            clientConsoleSender.printWriter = new PrintWriter(clientSocket.getOutputStream(), true, StandardCharsets.UTF_8);
+            ((ClientConsoleSender)client).printWriter = new PrintWriter(clientSocket.getOutputStream(), true, StandardCharsets.UTF_8);
             return this;
         }
-        public ClientConsoleSender.Builder setConnector(String connector)
+        @Override
+        public Builder setConnector(String connector)
         {
-            clientConsoleSender.connector = connector;
+            ((ClientConsoleSender)client).connector = connector;
             return this;
         }
+        @Override
         public ClientConsoleSender create() {
-            return clientConsoleSender;
+            return ((ClientConsoleSender)client);
         }
     }
 }

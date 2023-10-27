@@ -69,11 +69,11 @@ public class Application {
         var serverSocket = new ServerSocket(ServerConsoleSender.PORT);
         var clientSocket = serverSocket.accept();
 
-        var serverReceiver =  new ServerConsoleReceiver.Builder(serverSocket, clientSocket)
+        var serverReceiver =  new ServerConsoleReceiver.ConsoleReceiverBuilder(serverSocket, clientSocket)
                 .setBufferedReader(clientSocket).create();
 
         var serverSender = new ServerConsoleSender.Builder( serverSocket, clientSocket)
-                .setPrintWriter(clientSocket).setConnector("SERVER: ").create();
+                .setPrintWriter(clientSocket).setConnector("SERVER").create();
 
 
 
@@ -101,7 +101,7 @@ public class Application {
         try {
             var clientSocketWebcam = new Socket(Server.IP_ADDRESS, ServerWebcamSender.PORT);
 
-            var clientWebcamReceiver = new ClientWebcamReceiver.Builder(clientSocketWebcam).setConnector("GUEST: ")
+            var clientWebcamReceiver = new ClientWebcamReceiver.Builder(clientSocketWebcam).setConnector("GUEST")
                     .setDataInputStream(clientSocketWebcam).setImageDisplayPanel(new ImageDisplayPanel()).create();
 
             var clientWebcamSender = new ClientWebcamSender.Builder(clientSocketWebcam).setWebcam(Webcam.getDefault())
@@ -131,9 +131,9 @@ public class Application {
 
 
         var clientSender = new ClientConsoleSender.Builder(clientSocket)
-                .setConnector("GUEST: ").setPrintWriter(clientSocket).create();
+                .setConnector("GUEST").setPrintWriter(clientSocket).create();
 
-        var clientReceiver = new ClientConsoleReceiver.Builder(clientSocket).setConnector("GUEST: ")
+        var clientReceiver = new ClientConsoleReceiver.Builder(clientSocket).setConnector("GUEST")
                         .setBufferedReader(clientSocket).create();
 
         clientReceiver.start();

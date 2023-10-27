@@ -1,10 +1,11 @@
 package com.alcanl.app.chat.server.webcam;
 
 import com.alcanl.app.chat.server.Server;
+import com.alcanl.app.chat.server.ServerBuilder;
 import com.alcanl.app.global.ImageDisplayPanel;
 import com.alcanl.app.global.Resources;
+import com.alcanl.app.modules.webcam.IWebcamReceiverIBuilder;
 import com.karandev.util.console.Console;
-
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -31,16 +32,16 @@ public class ServerWebcamReceiver extends Server {
     {
         connect();
     }
-    public static class Builder {
-        private static ServerWebcamReceiver serverWebcamReceiver;
+    public static class Builder extends ServerBuilder implements IWebcamReceiverIBuilder {
         public Builder(ServerSocket serverSocket, Socket clientSocket)
         {
-            serverWebcamReceiver = new ServerWebcamReceiver(serverSocket, clientSocket);
+            server = new ServerWebcamReceiver(serverSocket, clientSocket);
         }
+        @Override
         public Builder setDataInputStream(Socket clientSocket)
         {
             try {
-                serverWebcamReceiver.dataInputStream = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+                ((ServerWebcamReceiver)server).dataInputStream = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
             }
             catch (IOException ex)
             {
@@ -48,21 +49,24 @@ public class ServerWebcamReceiver extends Server {
             }
             return this;
         }
+        @Override
         public Builder setConnector(String connector)
         {
-            serverWebcamReceiver.connector = connector;
+            ((ServerWebcamReceiver)server).connector = connector;
             return this;
         }
+        @Override
         public Builder setImageDisplayPanel(ImageDisplayPanel imageDisplayPanel)
         {
-            serverWebcamReceiver.imageDisplayPanel = imageDisplayPanel;
-            Resources.setJFrame(serverWebcamReceiver.imageDisplayPanel);
+            ((ServerWebcamReceiver)server).imageDisplayPanel = imageDisplayPanel;
+            Resources.setJFrame(((ServerWebcamReceiver)server).imageDisplayPanel);
 
             return this;
         }
+        @Override
         public ServerWebcamReceiver create()
         {
-            return serverWebcamReceiver;
+            return ((ServerWebcamReceiver)server);
         }
     }
 }

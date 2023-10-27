@@ -1,6 +1,9 @@
 package com.alcanl.app.chat.server.console;
 
 import com.alcanl.app.chat.server.Server;
+import com.alcanl.app.chat.server.ServerBuilder;
+import com.alcanl.app.modules.IBuilder;
+import com.alcanl.app.modules.console.IConsoleReceiverBuilder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,20 +31,28 @@ public class ServerConsoleReceiver extends Server {
         connect();
     }
 
-    public static class Builder {
-        private static ServerConsoleReceiver serverConsoleReceiver;
-        public Builder(ServerSocket serverSocket, Socket clientSocket)
+    public static class ConsoleReceiverBuilder extends ServerBuilder implements IConsoleReceiverBuilder {
+        public ConsoleReceiverBuilder(ServerSocket serverSocket, Socket clientSocket)
         {
-            serverConsoleReceiver = new ServerConsoleReceiver(serverSocket, clientSocket);
+            server = new ServerConsoleReceiver(serverSocket, clientSocket);
         }
-        public Builder setBufferedReader(Socket server) throws IOException
+        @Override
+        public ConsoleReceiverBuilder setBufferedReader(Socket clientSocket) throws IOException
         {
-            serverConsoleReceiver.bufferedReader = new BufferedReader(new InputStreamReader(server.getInputStream(), StandardCharsets.UTF_8));
+            ((ServerConsoleReceiver)server).bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
             return this;
         }
+        @Override
         public ServerConsoleReceiver create()
         {
-            return serverConsoleReceiver;
+            return ((ServerConsoleReceiver)server);
+        }
+
+        @Override
+        public IBuilder setConnector(String connector)
+        {
+            ((ServerConsoleReceiver)server).connector = connector;
+            return this;
         }
     }
 }

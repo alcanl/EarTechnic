@@ -12,7 +12,6 @@ public class ImageDisplayPanel extends JPanel
     {
         this.setDoubleBuffered(true); //to avoid flicker
     }
-
     public void setBackground (Image newBackground)
     {
         synchronized (BACKGROUND_LOCK)
@@ -31,7 +30,6 @@ public class ImageDisplayPanel extends JPanel
         }
         repaint();
     }
-
     @Override
     public void paint (Graphics g)
     {

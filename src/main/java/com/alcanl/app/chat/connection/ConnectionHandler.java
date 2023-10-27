@@ -4,13 +4,12 @@ import com.alcanl.app.global.ImageDisplayPanel;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamResolution;
 import com.karandev.util.console.Console;
-import net.coobird.thumbnailator.builders.BufferedImageBuilder;
-
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
+@SuppressWarnings("ALL")
 public final class ConnectionHandler {
     private ConnectionHandler()
     {
@@ -31,6 +30,8 @@ public final class ConnectionHandler {
     }
     private static void takeImage(ImageDisplayPanel imageDisplayPanel, DataInputStream dataInputStream) throws IOException
     {
+        var test = dataInputStream.readAllBytes();
+
         int frameWidth = dataInputStream.readInt();
         int frameHeight = dataInputStream.readInt();
         int[] pixelData = new int[frameWidth * frameHeight];
