@@ -122,7 +122,7 @@ public class Application {
     private static void help()
     {
         Console.writeLine("With usage of 'S' command you can be a host for a chat room and invite your friends with your ip address and port number.");
-        Console.writeLine("With usage of 'C' command you can join a chat room with ip address and port number that the host created before ");
+        Console.writeLine("With usage of 'J' command you can join a chat room with ip address and port number that the host created before ");
     }
 
     private static void joinChatServer() throws IOException
