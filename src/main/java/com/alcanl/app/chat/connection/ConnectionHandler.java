@@ -4,6 +4,7 @@ import com.alcanl.app.global.ImageDisplayPanel;
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.WebcamResolution;
 import com.karandev.util.console.Console;
+import net.coobird.thumbnailator.builders.BufferedImageBuilder;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -17,10 +18,8 @@ public final class ConnectionHandler {
     }
     private static void openWebcam(Webcam webcam)
     {
-
         webcam.setViewSize(WebcamResolution.VGA.getSize());
         webcam.open();
-
     }
     private static void sendAudioLoop()
     {
@@ -36,9 +35,9 @@ public final class ConnectionHandler {
         int frameHeight = dataInputStream.readInt();
         int[] pixelData = new int[frameWidth * frameHeight];
 
-        for (int i = 0; i < pixelData.length; i++) {
+        for (int i = 0; i < pixelData.length; i++)
             pixelData[i] = dataInputStream.readInt();
-        }
+
         BufferedImage frame = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_RGB);
         frame.setRGB(0, 0, frameWidth, frameHeight, pixelData, 0, frameWidth);
 

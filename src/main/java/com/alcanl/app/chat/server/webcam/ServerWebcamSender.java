@@ -12,7 +12,7 @@ import static com.alcanl.app.chat.connection.ConnectionHandler.serverImageSender
 public class ServerWebcamSender extends Server {
     public static final int PORT = 19430;
     private DataOutputStream dataOutputStream;
-    private Webcam webcam;
+    private static Webcam webcam;
 
     private ServerWebcamSender(ServerSocket serverSocket, Socket clientSocket)
     {
@@ -48,7 +48,7 @@ public class ServerWebcamSender extends Server {
         }
 
         public Builder setWebcam(Webcam webcam) {
-            serverWebcamSender.webcam = webcam;
+            ServerWebcamSender.webcam = webcam;
             return this;
         }
 

@@ -10,7 +10,7 @@ import static com.alcanl.app.chat.connection.ConnectionHandler.serverMessageSend
 
 public class ServerConsoleSender extends Server {
     private PrintWriter printWriter;
-    public static final Scanner kb = new Scanner(System.in);
+    private static final Scanner kb = new Scanner(System.in);
     public static final int PORT = 19420;
 
     private ServerConsoleSender(ServerSocket serverSocket, Socket clientSocket)

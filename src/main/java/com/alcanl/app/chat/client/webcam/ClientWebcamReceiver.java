@@ -20,7 +20,7 @@ public class ClientWebcamReceiver extends Client {
     @Override
     protected void connect()
     {
-        clientImageReceiver(clientSocket, new ImageDisplayPanel(), dataInputStream);
+        clientImageReceiver(clientSocket, imageDisplayPanel, dataInputStream);
     }
     @Override
     public void run()

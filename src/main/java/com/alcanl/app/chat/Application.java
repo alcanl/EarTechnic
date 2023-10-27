@@ -22,7 +22,7 @@ public class Application {
         Console.writeLine("""
                 Welcome to ConsoleChatApp
                 Please select your joiner type:
-                ServerConsole[S]/Joiner[J]
+                Server[S]/Joiner[J]
                 If you need more information, you can try '-help' command for usage.""");
 
         while (true) {

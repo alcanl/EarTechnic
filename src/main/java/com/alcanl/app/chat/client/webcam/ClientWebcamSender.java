@@ -10,7 +10,7 @@ import java.net.Socket;
 import static com.alcanl.app.chat.connection.ConnectionHandler.clientImageSender;
 
 public class ClientWebcamSender extends Client {
-    private Webcam webcam;
+    private static Webcam webcam;
     private DataOutputStream dataOutputStream;
     private ClientWebcamSender(Socket clientSocket)
     {
@@ -44,7 +44,7 @@ public class ClientWebcamSender extends Client {
         }
         public Builder setWebcam(Webcam webcam)
         {
-            clientWebcamSender.webcam = webcam;
+            ClientWebcamSender.webcam = webcam;
             return this;
         }
         public ClientWebcamSender create() {

@@ -23,7 +23,7 @@ public class ImageDisplayPanel extends JPanel
             }
             else if (background.getWidth() != newBackground.getWidth(null) || background.getHeight() != newBackground.getHeight(null))
             {
-                background.flush();//flush old resources first
+                background.flush();
                 background = new BufferedImage(newBackground.getWidth(null), newBackground.getHeight(null), BufferedImage.TYPE_INT_RGB);
             }
             Graphics graphics = background.createGraphics();
